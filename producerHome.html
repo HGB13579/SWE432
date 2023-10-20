@@ -15,6 +15,52 @@
             font-family: "Montserrat", serif;
         }
     </style>
+    <script>
+        window.onload = function() {
+            document.getElementById('userpfp').addEventListener('click', function (e) {
+                alert('User profile page not available yet!\nPlease check back soon!');
+            });
+    
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('keydown', function(event) {
+                if(event.key == 'Enter') {
+                    const searchTerm = searchInput.value.trim(); 
+                    if(searchTerm === "") {
+                        alert("Please enter a value to search for.");
+                    }
+                    else {
+                        alert('Searching for ' + searchTerm);
+                    }
+                }
+            });
+        };
+    
+        document.addEventListener("DOMContentLoaded", function(){
+            const dj = {
+                firstName: "Bruno",
+                lastName: "Mars",
+                current: "False"
+            };
+    
+            const djName = document.getElementById("djName");
+            djName.textContent = "Current DJ: " + dj.firstName + " " + dj.lastName;
+            dj.current = "True";
+        })
+    
+        function addQueue() {
+            const add = document.getElementById('queueadd');
+            add.disabled = true; 
+            const remove = document.getElementById('queueremove');
+            remove.disabled = false; 
+        }
+    
+        function removeQueue() {
+            const add = document.getElementById('queueadd');
+            add.disabled = false; 
+            const remove = document.getElementById('queueremove');
+            remove.disabled = true; 
+        }
+    </script>
 </head>
 
 <body>
@@ -31,10 +77,10 @@
                 </ul>
             </nav>
 
-            <input type="text" placeholder="Search for songs or DJs" class="searchbar">
+            <input type="text" placeholder="Search for songs or DJs" class="searchbar" id="search">
 
             <div class="usercluster">
-                <img src="template.jpg">
+                <img src="https://raw.githubusercontent.com/edtton/RadioStation/main/template.jpg" id="userpfp">
                 <nav class="userbuttons">
                     <button class="userbutton">
                         <a href="producerProfile.html">Profile</a>
@@ -110,7 +156,7 @@
             <div class="songcontrols">
                 <div class="songlabels">
                     <p class="left">Live Radio</p>
-                    <p class="right">Current DJ: John Doe</p>
+                    <p class="right" id="djName"></p>
                 </div>
                 <div class="player">
                     <audio controls id="radioPlayer">
@@ -122,8 +168,8 @@
             </div>
 
             <div class="songactions">
-                <button class="songaction">Add to Queue</button>
-                <button class="songaction">Remove from Queue</button>
+                <button class="songaction" id="queueadd" onclick="addQueue()">Add to Queue</button>
+                <button class="songaction" id="queueremove" disabled = true onclick="removeQueue()">Remove from Queue</button>
             </div>
         </header>
     </div>
