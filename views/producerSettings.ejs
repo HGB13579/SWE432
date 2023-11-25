@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="group20.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <style><%- include('../static/group20.css'); %></style>
+    <script><%- include('../static/script2.ejs'); %></script>
+</head>
+
+<body>
+    <div class="topheader">
+        <header class="top-banner">
+            <a href="" class="logo">
+                <img src="https://raw.githubusercontent.com/edtton/RadioStation/main/template.jpg">
+            </a>
+            <% if (username) { %>
+                <p><%= username %></p>
+               <% } %>
+            <nav class="navbuttons">
+                <ul>
+                    <li><a href="/?username=<%= username %>" class="navbutton">Home</a></li>
+                    <li><a href="/playlists?username=<%= username %>" class="navbutton">Edit Playlists</a></li>
+                </ul>
+            </nav>
+
+            <input type="text" placeholder="Search for songs or DJs" class="searchbar" id="search">
+
+            <div class="usercluster">
+                <img src="https://raw.githubusercontent.com/edtton/RadioStation/main/template.jpg" id="userpfp">
+                <nav class="userbuttons">
+                    <button class="userbutton">
+                        <a href="/producerProfile?username=<%= username %>">Profile</a>
+                    </button>
+                    <button class="userbutton">
+                        <a href="/producerSettings?username=<%= username %>">Settings</a>
+                    </button>
+                    <button class="userbutton">
+                        <a href="/logout">Logout</a>
+                    </button>
+                </nav>
+            </div>
+        </header>
+    </div>
+
+    <div class="upcomingsongs">
+        <h2>Change Password</h2>
+        <form id="changePasswordForm">
+            <label for="oldPassword">Old Password:</label>
+            <input type="password" id="oldPassword" name="oldPassword" required>
+    
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+    
+            <button type="submit">Change Password</button>
+        </form>
+    </div>
+
+
+    <div class="bottomheader">
+        <header class="bottom-banner">
+            <div class="songdetails">
+                <div class="albumimage">
+                    <img src="https://raw.githubusercontent.com/edtton/RadioStation/main/template.jpg">
+                </div>
+                <div class="songinfo">
+                    <h2>Song Title</h2>
+                    <h4>Artist Name</h4>
+                    <p>"Album Name"</p>
+                </div>
+            </div>
+
+            <div class="songcontrols">
+                <div class="songlabels">
+                    <p class="left">Live Radio</p>
+                    <p class="right" id="djName"></p>
+                </div>
+                <div class="player">
+                    <audio controls id="radioPlayer">
+                        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/WETAFM.mp3"
+                            type=audio/mpeg>
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+
+            <div class="songactions">
+                <button class="songaction" id="queueadd" onclick="addQueue()">Add to Queue</button>
+                <button class="songaction" id="queueremove" disabled = true onclick="removeQueue()">Remove from Queue</button>
+            </div>
+        </header>
+    </div>
+    <script>
+        let currentSongId;
+    
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('/getRandomSong');
+                const data = await response.json();
+    
+                if (data && data.name && data.artist) {
+                    // Update the content of the songinfo div
+                    document.getElementById('songTitle').textContent = data.title;
+                    document.getElementById('artistName').textContent = data.artist;
+                    document.getElementById('albumName').textContent = data.album || '';
+    
+                    currentSongId = data._id;
+                }
+                else {
+                    console.error('Error fetching random song:', data);
+                }
+            }
+            catch (error) {
+                console.error('Error fetching random song:', error);
+            }
+        });
+    
+        // Pass the current song's ID to addQueue when the button is clicked
+        function addQueue() {
+            // Now, send the current song's ID to the server
+            fetch('/addToQueue', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ songId: currentSongId }),  // Use 'songId' as the key
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                        return response.json();
+                    } 
+                    else {
+                        return response.json().then(error => Promise.reject(error));
+                    }
+                })
+                .then(data => {
+                    console.log(data.message);
+                    alert(data.message); // Display a message to the user
+                })
+                .catch(error => {
+                    console.error('Error adding song to queue:', error);
+                    alert(`Error: ${error.message}`); // Display an error message to the user
+                });
+                
+        }
+    
+        function removeQueue() {
+            // Now, send the current song's ID to the server
+            fetch('/removeFromQueue', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ songId: currentSongId }),  // Use 'songId' as the key
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // location.reload();
+                        return response.json();
+                    } 
+                    else {
+                        return response.json().then(error => Promise.reject(error));
+                    }
+                })
+                .then(data => {
+                    console.log(data.message);
+                    alert(data.message); // Display a message to the user
+                })
+                .catch(error => {
+                    console.error('Error removing song from the queue:', error);
+                    alert(`Error: ${error.message}`); // Display an error message to the user
+                });
+                
+        }
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
